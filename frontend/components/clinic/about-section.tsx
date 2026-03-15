@@ -14,7 +14,7 @@ export function AboutSection() {
                     <div className="flex-1 w-full">
                         <div className="relative w-full rounded-2xl overflow-hidden shadow-xl group">
                             <Image
-                                src="/images/about-clinic.jpeg"
+                                src="/images/about-clinic.png"
                                 alt="Equipe de la Clinique Mrabeut"
                                 width={800}
                                 height={600}

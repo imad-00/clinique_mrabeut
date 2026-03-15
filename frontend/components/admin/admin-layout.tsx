@@ -17,6 +17,8 @@ import {
   CalendarDays,
   Monitor,
   Film,
+  Shield,
+  KeyRound,
   LogOut,
   Menu,
   X,
@@ -30,6 +32,8 @@ const navItems = [
   { key: "admin_appointments" as const, href: "/admin/appointments", icon: CalendarDays, roles: ["SUPER_ADMIN", "SERVICE_ADMIN"] },
   { key: "admin_waiting_room" as const, href: "/admin/waiting-room", icon: Monitor, roles: ["SUPER_ADMIN", "SERVICE_ADMIN"] },
   { key: "admin_media" as const, href: "/admin/media", icon: Film, roles: ["SUPER_ADMIN"] },
+  { key: "admin_users" as const, href: "/admin/users", icon: Shield, roles: ["SUPER_ADMIN"] },
+  { key: "admin_security" as const, href: "/admin/security", icon: KeyRound, roles: ["SUPER_ADMIN", "SERVICE_ADMIN"] },
 ]
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {

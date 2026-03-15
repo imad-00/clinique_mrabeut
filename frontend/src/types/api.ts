@@ -160,3 +160,22 @@ export interface ApiErrorPayload {
   error: string
   code?: string
 }
+
+export interface ApiAdminUser {
+  id: string
+  email: string
+  role: "SUPER_ADMIN" | "SERVICE_ADMIN"
+  serviceId: string | null
+  isActive: boolean
+  lastLoginAt: string | null
+  lastLoginIp: string | null
+  failedLoginAttempts: number
+  lockedUntil: string | null
+  createdAt: string | null
+  updatedAt: string | null
+  service?: {
+    id: string
+    nameFr: string
+    nameAr: string
+  } | null
+}

@@ -26,3 +26,25 @@ This backend replaces the old `frontend/app/api/**` Next.js route handlers.
 - Timezone logic is enforced for `Africa/Algiers` date/slot behavior.
 - Admin auth is JWT bearer (`/api/auth/login`, `/api/auth/session`, `/api/auth/logout`).
 - Video files are served from `VIDEOS_DIR` and support HTTP byte ranges for playback.
+
+## Railway
+
+- Set the Railway service root directory to `backend`.
+- Install command:
+  ```bash
+  pip install -r requirements.txt
+  ```
+- Start command:
+  ```bash
+  ./start.sh
+  ```
+- Required env:
+  - `DJANGO_SECRET_KEY`
+  - `JWT_SECRET`
+  - `FRONTEND_ORIGIN`
+  - either `DATABASE_URL` or Railway `MYSQL_URL`
+- If you upload videos/media, mount a Railway volume and point:
+  - `MEDIA_ROOT=/data/media`
+  - `VIDEOS_DIR=/data/media/videos`
+- Health check:
+  - `/api/health`

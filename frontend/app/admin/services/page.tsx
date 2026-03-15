@@ -74,15 +74,6 @@ export default function AdminServicesPage() {
             )
             return
         }
-        if (!editing && adminPassword && adminPassword.length < 6) {
-            setFormError(
-                locale === "ar"
-                    ? "كلمة مرور المسؤول يجب أن تكون 6 أحرف على الأقل"
-                    : "Le mot de passe admin doit contenir au moins 6 caracteres."
-            )
-            return
-        }
-
         setFormError("")
         if (editing) {
             await updateService(editing.id, form)

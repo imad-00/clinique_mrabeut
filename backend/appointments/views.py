@@ -611,122 +611,125 @@ def admin_stats(request: HttpRequest) -> JsonResponse:
     else:
         date_str = get_clinic_date_string()
 
-    day_start, day_end = get_clinic_day_range(date_str)
+    try:
+        day_start, day_end = get_clinic_day_range(date_str)
 
-    appointments_qs = Appointment.objects.filter(appointment_date__gte=day_start, appointment_date__lt=day_end)
-    if not is_super_admin(admin_user):
-        appointments_qs = appointments_qs.filter(service_id=admin_user.service_id)
+        appointments_qs = Appointment.objects.filter(appointment_date__gte=day_start, appointment_date__lt=day_end)
+        if not is_super_admin(admin_user):
+            appointments_qs = appointments_qs.filter(service_id=admin_user.service_id)
 
-    status_groups = (
-        appointments_qs
-        .values("status")
-        .annotate(total=Count("id"))
-    )
-    slot_status_groups = (
-        appointments_qs
-        .values("slot", "status")
-        .annotate(total=Count("id"))
-    )
-    service_groups = (
-        appointments_qs
-        .values("service_id")
-        .annotate(total=Count("id"))
-    )
-    doctor_status_groups = (
-        appointments_qs
-        .values("doctor_id", "status")
-        .annotate(total=Count("id"))
-    )
-
-    waiting_appointments = list(
-        appointments_qs.filter(status=AppointmentStatus.WAITING).only(
-            "doctor_id", "patient_name", "arrived_at", "updated_at", "created_at"
+        status_groups = (
+            appointments_qs
+            .values("status")
+            .annotate(total=Count("id"))
         )
-    )
-
-    by_status = {"BOOKED": 0, "WAITING": 0, "CALLED": 0, "DONE": 0, "NO_SHOW": 0}
-    for row in status_groups:
-        by_status[row["status"]] = row["total"]
-
-    totals = {
-        "total": sum(by_status.values()),
-        **by_status,
-    }
-
-    by_slot = {
-        "MORNING": {"BOOKED": 0, "WAITING": 0, "CALLED": 0, "DONE": 0, "NO_SHOW": 0, "total": 0},
-        "EVENING": {"BOOKED": 0, "WAITING": 0, "CALLED": 0, "DONE": 0, "NO_SHOW": 0, "total": 0},
-    }
-    for row in slot_status_groups:
-        by_slot[row["slot"]][row["status"]] = row["total"]
-    for slot in ("MORNING", "EVENING"):
-        by_slot[slot]["total"] = sum(by_slot[slot][k] for k in ("BOOKED", "WAITING", "CALLED", "DONE", "NO_SHOW"))
-
-    service_map = {
-        service.id: service
-        for service in Service.objects.filter(id__in=[row["service_id"] for row in service_groups])
-    }
-    by_service = []
-    for row in service_groups:
-        service = service_map.get(row["service_id"])
-        by_service.append(
-            {
-                "serviceId": row["service_id"],
-                "total": row["total"],
-                "id": service.id if service else None,
-                "nameFr": service.name_fr if service else None,
-                "nameAr": service.name_ar if service else None,
-            }
+        slot_status_groups = (
+            appointments_qs
+            .values("slot", "status")
+            .annotate(total=Count("id"))
         )
-    by_service.sort(key=lambda item: item["total"], reverse=True)
-
-    doctor_ids = sorted({row["doctor_id"] for row in doctor_status_groups})
-    doctors = {doctor.id: doctor for doctor in Doctor.objects.filter(id__in=doctor_ids)}
-    doctor_stats: dict[str, dict[str, int]] = {}
-    for row in doctor_status_groups:
-        doc_stats = doctor_stats.setdefault(row["doctor_id"], {"WAITING": 0, "CALLED": 0, "DONE": 0})
-        if row["status"] in {"WAITING", "CALLED", "DONE"}:
-            doc_stats[row["status"]] = row["total"]
-
-    waiting_map: dict[str, str] = {}
-    waiting_appointments.sort(
-        key=lambda appt: (
-            appt.daily_queue_number if appt.daily_queue_number is not None else 10**9,
-            appt.doctor_queue_number if appt.doctor_queue_number is not None else 10**9,
-            _get_arrival_sort_time(appt),
+        service_groups = (
+            appointments_qs
+            .values("service_id")
+            .annotate(total=Count("id"))
         )
-    )
-    for appt in waiting_appointments:
-        waiting_map.setdefault(appt.doctor_id, appt.patient_name)
-
-    by_doctor = []
-    for doctor_id in doctor_ids:
-        doctor = doctors.get(doctor_id)
-        stats = doctor_stats.get(doctor_id, {"WAITING": 0, "CALLED": 0, "DONE": 0})
-        by_doctor.append(
-            {
-                "doctorId": doctor_id,
-                "id": doctor.id if doctor else None,
-                "nameFr": doctor.name_fr if doctor else None,
-                "nameAr": doctor.name_ar if doctor else None,
-                "WAITING": stats["WAITING"],
-                "CALLED": stats["CALLED"],
-                "DONE": stats["DONE"],
-                "nextWaitingNumber": None,
-                "nextWaitingPatientName": waiting_map.get(doctor_id),
-            }
+        doctor_status_groups = (
+            appointments_qs
+            .values("doctor_id", "status")
+            .annotate(total=Count("id"))
         )
 
-    return JsonResponse(
-        {
-            "date": date_str,
-            "totals": totals,
-            "byStatus": by_status,
-            "bySlot": by_slot,
-            "byService": by_service,
-            "byDoctor": by_doctor,
+        waiting_appointments = list(
+            appointments_qs.filter(status=AppointmentStatus.WAITING).only(
+                "doctor_id", "patient_name", "arrived_at", "updated_at", "created_at"
+            )
+        )
+
+        by_status = {"BOOKED": 0, "WAITING": 0, "CALLED": 0, "DONE": 0, "NO_SHOW": 0}
+        for row in status_groups:
+            by_status[row["status"]] = row["total"]
+
+        totals = {
+            "total": sum(by_status.values()),
+            **by_status,
         }
-    )
+
+        by_slot = {
+            "MORNING": {"BOOKED": 0, "WAITING": 0, "CALLED": 0, "DONE": 0, "NO_SHOW": 0, "total": 0},
+            "EVENING": {"BOOKED": 0, "WAITING": 0, "CALLED": 0, "DONE": 0, "NO_SHOW": 0, "total": 0},
+        }
+        for row in slot_status_groups:
+            by_slot[row["slot"]][row["status"]] = row["total"]
+        for slot in ("MORNING", "EVENING"):
+            by_slot[slot]["total"] = sum(by_slot[slot][k] for k in ("BOOKED", "WAITING", "CALLED", "DONE", "NO_SHOW"))
+
+        service_map = {
+            service.id: service
+            for service in Service.objects.filter(id__in=[row["service_id"] for row in service_groups])
+        }
+        by_service = []
+        for row in service_groups:
+            service = service_map.get(row["service_id"])
+            by_service.append(
+                {
+                    "serviceId": row["service_id"],
+                    "total": row["total"],
+                    "id": service.id if service else None,
+                    "nameFr": service.name_fr if service else None,
+                    "nameAr": service.name_ar if service else None,
+                }
+            )
+        by_service.sort(key=lambda item: item["total"], reverse=True)
+
+        doctor_ids = sorted({row["doctor_id"] for row in doctor_status_groups})
+        doctors = {doctor.id: doctor for doctor in Doctor.objects.filter(id__in=doctor_ids)}
+        doctor_stats: dict[str, dict[str, int]] = {}
+        for row in doctor_status_groups:
+            doc_stats = doctor_stats.setdefault(row["doctor_id"], {"WAITING": 0, "CALLED": 0, "DONE": 0})
+            if row["status"] in {"WAITING", "CALLED", "DONE"}:
+                doc_stats[row["status"]] = row["total"]
+
+        waiting_map: dict[str, str] = {}
+        waiting_appointments.sort(
+            key=lambda appt: (
+                appt.daily_queue_number if appt.daily_queue_number is not None else 10**9,
+                appt.doctor_queue_number if appt.doctor_queue_number is not None else 10**9,
+                _get_arrival_sort_time(appt),
+            )
+        )
+        for appt in waiting_appointments:
+            waiting_map.setdefault(appt.doctor_id, appt.patient_name)
+
+        by_doctor = []
+        for doctor_id in doctor_ids:
+            doctor = doctors.get(doctor_id)
+            stats = doctor_stats.get(doctor_id, {"WAITING": 0, "CALLED": 0, "DONE": 0})
+            by_doctor.append(
+                {
+                    "doctorId": doctor_id,
+                    "id": doctor.id if doctor else None,
+                    "nameFr": doctor.name_fr if doctor else None,
+                    "nameAr": doctor.name_ar if doctor else None,
+                    "WAITING": stats["WAITING"],
+                    "CALLED": stats["CALLED"],
+                    "DONE": stats["DONE"],
+                    "nextWaitingNumber": None,
+                    "nextWaitingPatientName": waiting_map.get(doctor_id),
+                }
+            )
+
+        return JsonResponse(
+            {
+                "date": date_str,
+                "totals": totals,
+                "byStatus": by_status,
+                "bySlot": by_slot,
+                "byService": by_service,
+                "byDoctor": by_doctor,
+            }
+        )
+    except DatabaseError:
+        return json_error("Unable to load stats.", 500, "STATS_UNAVAILABLE")
 
 
 @admin_required

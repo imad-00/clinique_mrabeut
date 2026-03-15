@@ -9,7 +9,7 @@ export function HeroSection() {
     const { t } = useI18n()
 
     return (
-        <section className="relative w-full min-h-[60vh] lg:min-h-[75vh] overflow-hidden">
+        <section id="hero" className="relative w-full min-h-[60vh] lg:min-h-[75vh] overflow-hidden">
             {/* Full-bleed background image */}
             <div className="absolute inset-0">
                 <Image

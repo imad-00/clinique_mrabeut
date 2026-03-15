@@ -1,6 +1,6 @@
-# Clinic Frontend (Static Next.js)
+# Clinic Frontend (Next.js)
 
-This app is now frontend-only and is exported as static files.
+This app is frontend-only.
 All backend APIs are served by Django.
 
 ## Setup
@@ -19,13 +19,11 @@ All backend APIs are served by Django.
    pnpm dev
    ```
 
-## Static Export
+## Production Build
 
 ```bash
 pnpm build
 ```
-
-Next is configured with `output: "export"` in `next.config.mjs`.
 
 ## Required Env
 
@@ -45,3 +43,14 @@ NEXT_PUBLIC_API_BASE_URL="http://localhost:8000"
 
 - All business API paths remain `/api/...` and are called against `NEXT_PUBLIC_API_BASE_URL`.
 - Video playback URLs are returned by the backend and consumed directly by the display page.
+
+## Vercel
+
+- Set the Vercel project root directory to `frontend`.
+- Set environment variable:
+  - `NEXT_PUBLIC_API_BASE_URL=https://your-railway-backend.up.railway.app`
+- Build command:
+  ```bash
+  npm run build
+  ```
+- Output uses the default Next.js Vercel runtime.

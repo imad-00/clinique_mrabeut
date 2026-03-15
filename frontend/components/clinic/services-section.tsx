@@ -7,6 +7,7 @@ import type { Service } from "@/src/lib/types"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
+import Image from "next/image"
 
 export function ServicesSection() {
   const { t, locale } = useI18n()
@@ -73,16 +74,29 @@ export function ServicesSection() {
   }
 
   return (
-    <section id="services" className="py-20 md:py-28 bg-clinic-soft">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-14">
-          <p className="text-sm font-semibold uppercase tracking-widest text-clinic-accent mb-3">
+    <section id="services" className="relative py-20 md:py-28 overflow-hidden">
+      <div className="absolute inset-0">
+        <Image
+          src="/images/about-clinic.png"
+          alt=""
+          fill
+          className="object-cover scale-110"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(5,28,21,0.92),rgba(7,72,49,0.78),rgba(11,39,30,0.88))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(200,233,220,0.12),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(86,184,147,0.14),transparent_34%)]" />
+      </div>
+
+      <div className="relative container mx-auto px-4">
+        <div className="max-w-5xl mx-auto rounded-[2rem] border border-white/10 bg-black/10 px-6 py-10 md:px-10 md:py-12 backdrop-blur-[2px] shadow-[0_30px_80px_rgba(0,0,0,0.24)]">
+          <div className="text-center mb-14">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-clinic-mint mb-3">
             {locale === "ar" ? "\u062E\u062F\u0645\u0627\u062A\u0646\u0627 \u0627\u0644\u0637\u0628\u064A\u0629" : "Nos specialites"}
           </p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 text-balance">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 text-balance">
             {t("services_title")}
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+          <p className="text-white text-white/88 max-w-2xl mx-auto text-lg leading-relaxed">
             {t("services_subtitle")}
           </p>
         </div>
@@ -93,7 +107,7 @@ export function ServicesSection() {
               <Button
                 variant="outline"
                 size="icon"
-                className="hidden md:flex absolute -left-5 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white text-foreground border-border shadow-md hover:bg-clinic-mint"
+                className="hidden md:flex absolute -left-5 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white text-foreground border-white shadow-md hover:bg-clinic-mint"
                 onClick={() => scrollCarousel("left")}
                 aria-label={locale === "ar" ? "السابق" : "Precedent"}
               >
@@ -102,7 +116,7 @@ export function ServicesSection() {
               <Button
                 variant="outline"
                 size="icon"
-                className="hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white text-foreground border-border shadow-md hover:bg-clinic-mint"
+                className="hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white text-foreground border-white shadow-md hover:bg-clinic-mint"
                 onClick={() => scrollCarousel("right")}
                 aria-label={locale === "ar" ? "التالي" : "Suivant"}
               >
@@ -124,22 +138,25 @@ export function ServicesSection() {
                   data-service-card="true"
                   className={`group flex-shrink-0 w-[85%] sm:w-[62%] lg:w-[42%] xl:w-[36%] snap-center border transition-all duration-300 ${
                     isActive
-                      ? "bg-white border-clinic-primary/40 shadow-xl"
-                      : "bg-card/95 border-border/60 shadow-sm opacity-90"
+                      ? "bg-white border-[#d6e8e0] shadow-[0_24px_50px_rgba(5,28,21,0.22)] -translate-y-1"
+                      : "bg-[#f7fbf9] border-[#dfece6] shadow-[0_16px_34px_rgba(5,28,21,0.14)]"
                   }`}
                 >
                   <CardContent className="p-0">
                     <div className="h-1.5 w-full bg-gradient-to-r from-clinic-primary via-clinic-accent to-clinic-deep rounded-t-xl" />
                     <div className="p-6 md:p-7 flex flex-col items-center text-center gap-4 min-h-[250px]">
+                      <div className="inline-flex items-center rounded-full bg-clinic-soft px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-clinic-accent">
+                        {locale === "ar" ? "اختصاص" : "Service"}
+                      </div>
                       <h3 className="text-xl font-bold text-foreground group-hover:text-clinic-deep transition-colors">
                         {locale === "ar" ? service.name_ar : service.name_fr}
                       </h3>
-                      <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-prose">
+                      <p className="text-sm md:text-base text-slate-600 leading-relaxed max-w-prose">
                         {locale === "ar" ? service.description_ar : service.description_fr}
                       </p>
                       <a
                         href="#appointment"
-                        className="inline-flex items-center text-sm font-semibold text-clinic-accent hover:text-clinic-deep transition-colors mt-1"
+                        className="inline-flex items-center rounded-full bg-clinic-deep px-4 py-2 text-sm font-semibold text-white hover:bg-clinic-accent transition-colors mt-1"
                       >
                         {locale === "ar" ? "\u0627\u062D\u062C\u0632 \u0645\u0648\u0639\u062F\u0627" : "Prendre rendez-vous"}
                         <ArrowRight className="h-4 w-4 ltr:ml-1.5 rtl:mr-1.5 rtl:rotate-180" />
@@ -164,14 +181,15 @@ export function ServicesSection() {
                   }}
                   className={`h-2.5 rounded-full transition-all ${
                     index === activeIndex
-                      ? "w-8 bg-clinic-primary"
-                      : "w-2.5 bg-clinic-primary/30 hover:bg-clinic-primary/50"
+                      ? "w-8 bg-white"
+                      : "w-2.5 bg-white/35 hover:bg-white/55"
                   }`}
                   aria-label={`${locale === "ar" ? "خدمة" : "Service"} ${index + 1}`}
                 />
               ))}
             </div>
           )}
+        </div>
         </div>
       </div>
     </section>

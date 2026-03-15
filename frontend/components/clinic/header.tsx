@@ -1,16 +1,18 @@
 "use client"
 
 import { useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import { useI18n } from "@/src/lib/i18n/context"
 import { LanguageSwitcher } from "./language-switcher"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
-import Link from "next/link"
 import { BrandLogo } from "@/components/BrandLogo"
 
 export function Header() {
     const { t } = useI18n()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const pathname = usePathname()
+    const router = useRouter()
 
     const navItems = [
         { label: t("nav_services"), href: "#services" },
@@ -19,13 +21,33 @@ export function Header() {
         { label: t("nav_contact"), href: "#contact" },
     ]
 
+    const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        if (pathname !== "/") {
+            return
+        }
+
+        event.preventDefault()
+        const hero = document.getElementById("hero")
+        if (!hero) {
+            router.push("/#hero")
+            return
+        }
+
+        hero.scrollIntoView({ behavior: "smooth", block: "start" })
+        window.history.replaceState(null, "", "#hero")
+    }
+
     return (
         <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border">
             <div className="container mx-auto flex items-center justify-between px-4 py-3">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-3 rtl:flex-row-reverse">
+                <a
+                    href="/#hero"
+                    onClick={handleLogoClick}
+                    className="flex items-center gap-3 rtl:flex-row-reverse"
+                >
                     <BrandLogo size="lg" variant="default" className="shrink-0" priority />
-                </Link>
+                </a>
 
                 {/* Desktop Nav */}
                 <nav className="hidden md:flex items-center gap-6">

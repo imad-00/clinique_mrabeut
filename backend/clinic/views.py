@@ -91,10 +91,13 @@ def admin_services(request: HttpRequest) -> JsonResponse:
     admin_user = get_admin_from_request(request)
 
     if request.method == "GET":
-        services = Service.objects.order_by("-created_at")
-        if not is_super_admin(admin_user):
-            services = services.filter(id=admin_user.service_id)
-        return JsonResponse({"services": [service_to_dict(service) for service in services]})
+        try:
+            services = Service.objects.order_by("-created_at")
+            if not is_super_admin(admin_user):
+                services = services.filter(id=admin_user.service_id)
+            return JsonResponse({"services": [service_to_dict(service) for service in services]})
+        except DatabaseError:
+            return json_error("Unable to list services.", 500, "LIST_FAILED")
 
     if not is_super_admin(admin_user):
         return json_error("Forbidden", 403, "FORBIDDEN")
@@ -122,8 +125,6 @@ def admin_services(request: HttpRequest) -> JsonResponse:
         admin_email = admin_email.strip().lower()
         if "@" not in admin_email:
             return json_error("Invalid admin email.", 400)
-        if len(admin_password or "") < 6:
-            return json_error("Admin password must be at least 6 characters.", 400)
         if AdminUser.objects.filter(email=admin_email).exists():
             return json_error("Admin email already exists.", 409, "ADMIN_EMAIL_TAKEN")
 
@@ -147,6 +148,9 @@ def admin_services(request: HttpRequest) -> JsonResponse:
                     password_hash=password_hash,
                     role="SERVICE_ADMIN",
                     service_id=service.id,
+                    is_active=True,
+                    failed_login_attempts=0,
+                    auth_version=0,
                 )
     except DatabaseError:
         return json_error("Unable to create service.", 500, "CREATE_FAILED")

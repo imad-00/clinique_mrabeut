@@ -4,7 +4,7 @@ export const translations = {
     fr: {
         // Top bar
         topbar_phone: "048 74 57 72",
-        topbar_email: "contact@cliniquemrabeut.dz",
+        topbar_email: "cliniquemrabeut@gmail.com",
 
         // Nav
         nav_services: "Services",
@@ -77,7 +77,7 @@ export const translations = {
         contact_title: "Contactez-nous",
         contact_subtitle: "N'hesitez pas a nous contacter pour toute question",
         contact_address: "Adresse",
-        contact_address_value: "Rue Hamel Slimane, Sidi Bel Abbès",
+        contact_address_value: "08 Rue Hamel Slimane, Sidi Bel Abbès",
         contact_phone: "Telephone",
         contact_email: "Email",
         contact_hours: "Horaires d'ouverture",
@@ -101,6 +101,8 @@ export const translations = {
         admin_doctors: "Medecins",
         admin_appointments: "Rendez-vous",
         admin_waiting_room: "Salle d'attente",
+        admin_users: "Admins",
+        admin_security: "Securite",
         admin_today: "Aujourd'hui",
         admin_this_week: "Cette semaine",
         admin_by_service: "Par service",
@@ -183,7 +185,7 @@ export const translations = {
     ar: {
         // Top bar
         topbar_phone: "048 74 57 72",
-        topbar_email: "contact@cliniquemrabeut.dz",
+        topbar_email: "cliniquemrabeut@gmail.com",
 
         // Nav
         nav_services: "\u0627\u0644\u062E\u062F\u0645\u0627\u062A",
@@ -256,7 +258,7 @@ export const translations = {
         contact_title: "\u0627\u062A\u0635\u0644 \u0628\u0646\u0627",
         contact_subtitle: "\u0644\u0627 \u062A\u062A\u0631\u062F\u062F\u0648\u0627 \u0641\u064A \u0627\u0644\u0627\u062A\u0635\u0627\u0644 \u0628\u0646\u0627 \u0644\u0623\u064A \u0627\u0633\u062A\u0641\u0633\u0627\u0631",
         contact_address: "\u0627\u0644\u0639\u0646\u0648\u0627\u0646",
-        contact_address_value: "\u0634\u0627\u0631\u0639 \u0627\u0644\u0639\u064A\u0627\u062F\u0629\u060C \u0627\u0644\u0645\u062F\u064A\u0646\u0629\u060C \u0627\u0644\u062C\u0632\u0627\u0626\u0631",
+        contact_address_value: "08 Rue Hamel Slimane, Sidi Bel Abb\u00E8s",
         contact_phone: "\u0627\u0644\u0647\u0627\u062A\u0641",
         contact_email: "\u0627\u0644\u0628\u0631\u064A\u062F \u0627\u0644\u0625\u0644\u0643\u062A\u0631\u0648\u0646\u064A",
         contact_hours: "\u0633\u0627\u0639\u0627\u062A \u0627\u0644\u0639\u0645\u0644",
@@ -280,6 +282,8 @@ export const translations = {
         admin_doctors: "\u0627\u0644\u0623\u0637\u0628\u0627\u0621",
         admin_appointments: "\u0627\u0644\u0645\u0648\u0627\u0639\u064A\u062F",
         admin_waiting_room: "\u063A\u0631\u0641\u0629 \u0627\u0644\u0627\u0646\u062A\u0638\u0627\u0631",
+        admin_users: "\u0627\u0644\u0645\u0634\u0631\u0641\u0648\u0646",
+        admin_security: "\u0623\u0645\u0627\u0646",
         admin_today: "\u0627\u0644\u064A\u0648\u0645",
         admin_this_week: "\u0647\u0630\u0627 \u0627\u0644\u0623\u0633\u0628\u0648\u0639",
         admin_by_service: "\u062D\u0633\u0628 \u0627\u0644\u062E\u062F\u0645\u0629",

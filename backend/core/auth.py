@@ -43,6 +43,7 @@ def issue_token(user: AdminUser) -> str:
         "email": user.email,
         "role": user.role,
         "serviceId": user.service_id,
+        "authVersion": user.auth_version,
         "iat": int(now.timestamp()),
         "exp": int((now + timedelta(minutes=settings.JWT_EXPIRES_MINUTES)).timestamp()),
     }
@@ -81,7 +82,12 @@ def get_admin_from_request(request: HttpRequest) -> AdminUser:
 
     if user.role not in {SUPER_ADMIN_ROLE, SERVICE_ADMIN_ROLE}:
         raise AuthError("Unauthorized")
+    if not user.is_active:
+        raise AuthError("Unauthorized")
     if is_service_admin(user) and not user.service_id:
+        raise AuthError("Unauthorized")
+    token_auth_version = payload.get("authVersion", 0)
+    if token_auth_version != user.auth_version:
         raise AuthError("Unauthorized")
 
     request.admin_user = user

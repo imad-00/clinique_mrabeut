@@ -19,9 +19,26 @@ type SessionResponse = {
   user: SessionUser
 }
 
+type AuthErrorPayload = {
+  error?: string
+  code?: string
+}
+
 type LoginResult = {
   ok: boolean
   error?: string
+  code?: string
+}
+
+type PasswordResult = {
+  ok: boolean
+  error?: string
+  code?: string
+}
+
+async function parseError(response: Response): Promise<AuthErrorPayload> {
+  const payload = (await response.json().catch(() => null)) as AuthErrorPayload | null
+  return payload || {}
 }
 
 export async function signInAdmin(email: string, password: string): Promise<LoginResult> {
@@ -34,9 +51,13 @@ export async function signInAdmin(email: string, password: string): Promise<Logi
     })
 
     if (!response.ok) {
-      const payload = (await response.json().catch(() => null)) as { error?: string } | null
+      const payload = await parseError(response)
       clearAdminAuth()
-      return { ok: false, error: payload?.error || "Email ou mot de passe invalide." }
+      return {
+        ok: false,
+        error: payload.error || "Email ou mot de passe invalide.",
+        code: payload.code,
+      }
     }
 
     const data = (await response.json()) as LoginResponse
@@ -89,4 +110,47 @@ export async function getAdminSession(): Promise<SessionResponse | null> {
     clearAdminUser()
   }
   return data
+}
+
+export async function changeAdminPassword(currentPassword: string, newPassword: string): Promise<PasswordResult> {
+  const token = getAdminToken()
+  if (!token) {
+    return { ok: false, error: "Session invalide." }
+  }
+
+  const response = await fetch(resolveApiUrl("/api/auth/change-password"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ currentPassword, newPassword }),
+    credentials: "omit",
+  })
+
+  if (!response.ok) {
+    const payload = await parseError(response)
+    return { ok: false, error: payload.error || "Impossible de modifier le mot de passe.", code: payload.code }
+  }
+
+  clearAdminAuth()
+  return { ok: true }
+}
+
+export async function resetAdminPassword(token: string, newPassword: string): Promise<PasswordResult> {
+  const response = await fetch(resolveApiUrl("/api/auth/reset-password"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token, newPassword }),
+    credentials: "omit",
+  })
+
+  if (!response.ok) {
+    const payload = await parseError(response)
+    return { ok: false, error: payload.error || "Impossible de reinitialiser le mot de passe.", code: payload.code }
+  }
+
+  return { ok: true }
 }

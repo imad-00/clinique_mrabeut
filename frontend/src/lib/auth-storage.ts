@@ -8,6 +8,9 @@ export type AdminSessionUser = {
   email: string
   role: AdminRole
   serviceId?: string | null
+  isActive?: boolean
+  lastLoginAt?: string | null
+  lastLoginIp?: string | null
 }
 
 export function getAdminToken(): string | null {

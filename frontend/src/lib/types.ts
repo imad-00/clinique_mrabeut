@@ -116,6 +116,25 @@ export interface DashboardStats {
   }[]
 }
 
+export interface AdminManagedUser {
+  id: string
+  email: string
+  role: "SUPER_ADMIN" | "SERVICE_ADMIN"
+  serviceId: string | null
+  isActive: boolean
+  lastLoginAt: string | null
+  lastLoginIp: string | null
+  failedLoginAttempts: number
+  lockedUntil: string | null
+  createdAt: string | null
+  updatedAt: string | null
+  service?: {
+    id: string
+    nameFr: string
+    nameAr: string
+  } | null
+}
+
 export interface AvailableDoctor {
   doctor: Doctor
   remainingCapacity: number

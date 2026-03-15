@@ -23,11 +23,11 @@ export function Footer() {
 
           {/* Contact */}
           <div className="flex items-center gap-6 text-sm opacity-80">
-            <a href="tel:+21300000000" className="flex items-center gap-1.5 hover:opacity-100 transition-opacity">
+            <a href="tel:+21348745772" className="flex items-center gap-1.5 hover:opacity-100 transition-opacity">
               <Phone className="h-3.5 w-3.5" />
               <span dir="ltr" style={{ unicodeBidi: "isolate" }}>{phone}</span>
             </a>
-            <a href="mailto:contact@cliniquemrabeut.dz" className="flex items-center gap-1.5 hover:opacity-100 transition-opacity">
+            <a href="mailto:cliniquemrabeut@gmail.com" className="flex items-center gap-1.5 hover:opacity-100 transition-opacity">
               <Mail className="h-3.5 w-3.5" />
               <span>{t("topbar_email")}</span>
             </a>

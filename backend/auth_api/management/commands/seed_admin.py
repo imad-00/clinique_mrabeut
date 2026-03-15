@@ -34,7 +34,26 @@ class Command(BaseCommand):
             user.password_hash = password_hash
             user.role = "SUPER_ADMIN"
             user.service_id = None
-            user.save(update_fields=["password_hash", "role", "service_id", "updated_at"])
+            user.is_active = True
+            user.failed_login_attempts = 0
+            user.locked_until = None
+            user.reset_token_hash = None
+            user.reset_token_expires_at = None
+            user.auth_version = (user.auth_version or 0) + 1
+            user.save(
+                update_fields=[
+                    "password_hash",
+                    "role",
+                    "service_id",
+                    "is_active",
+                    "failed_login_attempts",
+                    "locked_until",
+                    "reset_token_hash",
+                    "reset_token_expires_at",
+                    "auth_version",
+                    "updated_at",
+                ]
+            )
             self.stdout.write(self.style.SUCCESS(f"Updated admin user: {email}"))
             return
 
@@ -44,5 +63,8 @@ class Command(BaseCommand):
             password_hash=password_hash,
             role="SUPER_ADMIN",
             service_id=None,
+            is_active=True,
+            failed_login_attempts=0,
+            auth_version=0,
         )
         self.stdout.write(self.style.SUCCESS(f"Created admin user: {email}"))
