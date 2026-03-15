@@ -7,7 +7,7 @@ frontend/.next/
 frontend/out/
 frontend/tsconfig.tsbuildinfo
 
-# Backend local/generated files
+# Backend local/generated files ook
 backend/.env
 backend/.venv/
 backend/media/
