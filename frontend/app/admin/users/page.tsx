@@ -282,9 +282,11 @@ export default function AdminUsersPage() {
                           <Button variant="ghost" size="icon" onClick={() => openEdit(user)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" disabled={busyId === user.id} onClick={() => openPasswordDialog(user)}>
-                            <KeyRound className="h-4 w-4" />
-                          </Button>
+                          {user.role === "SERVICE_ADMIN" ? (
+                            <Button variant="ghost" size="icon" disabled={busyId === user.id} onClick={() => openPasswordDialog(user)}>
+                              <KeyRound className="h-4 w-4" />
+                            </Button>
+                          ) : null}
                           <Button variant="ghost" size="icon" disabled={busyId === user.id} onClick={() => handleToggleActive(user)}>
                             <Power className="h-4 w-4" />
                           </Button>

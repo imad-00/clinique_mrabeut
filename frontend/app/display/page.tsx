@@ -21,6 +21,9 @@ export default function DisplayPage() {
 
     const [timeString, setTimeString] = useState("")
     const [dateString, setDateString] = useState("")
+    const delay = (ms: number) => new Promise<void>((resolve) => {
+        window.setTimeout(resolve, ms)
+    })
 
     useEffect(() => {
         const tick = () => {
@@ -152,16 +155,33 @@ export default function DisplayPage() {
             })
         }
 
+        const playAudioTwice = async (audio: HTMLAudioElement) => {
+            for (let index = 0; index < 2; index += 1) {
+                audio.pause()
+                audio.currentTime = 0
+                await audio.play()
+                await new Promise<void>((resolve) => {
+                    const onEnded = () => resolve()
+                    const onError = () => resolve()
+                    audio.addEventListener("ended", onEnded, { once: true })
+                    audio.addEventListener("error", onError, { once: true })
+                })
+                if (index === 0) {
+                    await delay(250)
+                }
+            }
+        }
+
         const playNotification = async () => {
             try {
                 if (notificationAudioRef.current) {
-                    notificationAudioRef.current.pause()
-                    notificationAudioRef.current.currentTime = 0
-                    await notificationAudioRef.current.play()
+                    await playAudioTwice(notificationAudioRef.current)
                     return
                 }
             } catch {
                 try {
+                    await playSynthFallback()
+                    await delay(250)
                     await playSynthFallback()
                 } catch {
                     // Browser autoplay policy may block audio until the page is user-activated.

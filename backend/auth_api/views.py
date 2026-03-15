@@ -424,14 +424,22 @@ def issue_admin_reset_token_view(_request: HttpRequest, user_id: str) -> JsonRes
 
 @super_admin_required
 @require_http_methods(["POST"])
-def set_admin_password_view(_request: HttpRequest, user_id: str) -> JsonResponse:
+def set_admin_password_view(request: HttpRequest, user_id: str) -> JsonResponse:
     try:
         user = AdminUser.objects.get(id=user_id)
     except AdminUser.DoesNotExist:
         return json_error("Admin user not found.", 404, "NOT_FOUND")
 
+    # Super-admin passwords must be changed from the security page by the owner account.
+    if user.role == AdminRole.SUPER_ADMIN:
+        return json_error(
+            "Super admin password can only be changed from the security page by that account.",
+            403,
+            "SUPER_ADMIN_PASSWORD_SELF_ONLY",
+        )
+
     try:
-        payload = parse_json_body(_request)
+        payload = parse_json_body(request)
     except Exception:
         return json_error("Invalid JSON body.", 400)
 
